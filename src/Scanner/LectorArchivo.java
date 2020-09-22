@@ -9,7 +9,7 @@ public class LectorArchivo {
 
     public LectorArchivo(String nom){
         try {
-            arch=new File("src/"+nom+".txt");
+            arch=new File(nom+".txt");
             fr = new FileReader(arch);
             br = new BufferedReader(fr);
         } catch (FileNotFoundException e) {
