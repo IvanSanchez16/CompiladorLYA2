@@ -9,6 +9,6 @@ public class Parser {
         S = new Scanner("Codigo");
         Programa p = new Programa(S);
         boolean band = p.validarPrograma();
-        System.out.println(band);
+        System.out.println(band ? "Compilado correctamente" : "");
     }
 }

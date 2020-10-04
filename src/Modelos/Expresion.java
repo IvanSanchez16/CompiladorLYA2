@@ -21,7 +21,7 @@ public class Expresion {
             token = S.getToken();
         }
         S.apuntador -= 1;
-        if ( tokens.size() == 1 && (tokens.get(0).getTipo() == Token.NUMERO || tokens.get(0).getTipo() == Token.BOLEANO || tokens.get(0).getTipo() == Token.IDENTIFICADOR) )
+        if ( tokens.size() == 1 && (tokens.get(0).getTipo() == Token.NUMERO || tokens.get(0).getTipo() == Token.BOLEANO || tokens.get(0).getTipo() == Token.IDENTIFICADOR || tokens.get(0).getTipo() == Token.CADENA) )
             return true;
         if ( tokens.size() == 3 ){
             if ( tokens.get(0).getTipo() == Token.IDENTIFICADOR ){
