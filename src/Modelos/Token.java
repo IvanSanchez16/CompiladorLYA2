@@ -4,6 +4,7 @@ public class Token {
     private String token;
     private int tipo;
 
+    public static final int ERROR = -1;
     public static final int RESERVADA = 0;
     public static final int DELIMITADOR = 1;
     public static final int OPERADOR = 2;

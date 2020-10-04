@@ -4,8 +4,12 @@ import Modelos.Token;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Scanner {
+
+    public ArrayList<Token> tokens;
+    public int apuntador;
 
     private LectorArchivo lector;
     private int numLinea;
@@ -46,10 +50,24 @@ public class Scanner {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,"El archivo está vacío","Compilado terminado",JOptionPane.INFORMATION_MESSAGE);
         }
+        tokens = new ArrayList<>();
+        apuntador = 0;
+        llenarTokens();
     }
 
     public Token getToken(){
-        lineaAct = lineaAct.trim();
+        return tokens.get(apuntador++);
+    }
+
+    private void llenarTokens(){
+        Token t = sigToken();
+        while (t != null){
+            tokens.add(t);
+            t = sigToken();
+        }
+    }
+
+    public Token sigToken(){
         //Valido que no se haya terminado la linea
         if ( lineaAct.equals("") ){
             try {
@@ -62,6 +80,7 @@ public class Scanner {
         //EOF
         if (lineaAct == null)
             return null;
+        lineaAct = lineaAct.trim();
         //Construyo el siguiente token
         String token = "";
         //Valido que anteriormente no se haya encontrado un delimitador
@@ -166,18 +185,25 @@ public class Scanner {
     }
 
     private int comprobarTipo(String token){
-        if( esReservada(token) )
-            return Token.RESERVADA;
         if ( token.equals("true") || token.equals("false"))
             return Token.BOLEANO;
-        
+        if( esReservada(token) )
+            return Token.RESERVADA;
         try {
             Integer.parseInt(token);
         } catch (NumberFormatException e) {
             char primerCaracter = token.charAt(0);
-            if (( primerCaracter>96  && primerCaracter<123) || (primerCaracter>64 && primerCaracter<91) )
+            if (( primerCaracter>96  && primerCaracter<123) || (primerCaracter>64 && primerCaracter<91) ){
+                for (int i = 1; i < token.length() ; i++) {
+                    if ( esCaracterEspecial(token.charAt(i)) ){
+                        System.out.println("Error en la linea "+numLinea+" caracter inválido detectado");
+                        return Token.ERROR;
+                    }
+                }
                 return Token.IDENTIFICADOR;
-            //Error
+            }
+            System.out.println("Error en la linea "+numLinea+" no se puede definir un identificador empezando por un número");
+            return Token.ERROR;
         }
         return Token.NUMERO;
     }
