@@ -3,6 +3,7 @@ package Modelos;
 public class Token {
     private String token;
     private int tipo;
+    private int numLinea;
 
     public static final int ERROR = -1;
     public static final int RESERVADA = 0;
@@ -14,26 +15,21 @@ public class Token {
     public static final int BOLEANO = 6;
     public static final int CADENA = 7;
 
-    public Token(String token, int tipo) {
+    public Token(String token, int tipo, int nl) {
         this.token = token;
         this.tipo = tipo;
+        numLinea = nl;
     }
 
     public String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public int getTipo() {
         return tipo;
     }
 
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
-    }
+    public int getNumLinea() { return numLinea; }
 
     @Override
     public String toString() {

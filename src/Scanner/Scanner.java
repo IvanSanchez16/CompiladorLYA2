@@ -14,7 +14,7 @@ public class Scanner {
     private LectorArchivo lector;
     private int numLinea;
     private String lineaAct;
-    private boolean delBand, opBand;
+    private boolean delBand, opBand, errBand;
     private final char[] delimitadores = {
             '(',
             ')',
@@ -41,7 +41,7 @@ public class Scanner {
     };
 
     public Scanner(String nombreArch) {
-        delBand = false;
+        delBand = errBand = false;
         opBand = false;
         numLinea = 1;
         lector = new LectorArchivo(nombreArch);
@@ -68,6 +68,7 @@ public class Scanner {
     }
 
     public Token sigToken(){
+        errBand = false;
         //Valido que no se haya terminado la linea
         if ( lineaAct.equals("") ){
             try {
@@ -88,7 +89,7 @@ public class Scanner {
             token = lineaAct.charAt(0)+"";
             lineaAct = lineaAct.substring(1);
             delBand = false;
-            return new Token(token, Token.DELIMITADOR);
+            return new Token(token, Token.DELIMITADOR, numLinea);
         }
         char caracter;
         //Valido que anteriormente no se haya encontrado un operador
@@ -99,12 +100,12 @@ public class Scanner {
                 token = caracter + "" + aux2;
                 lineaAct = lineaAct.substring(2);
                 opBand = false;
-                return new Token(token, Token.OPERADOR);
+                return new Token(token, Token.OPERADOR, numLinea);
             }
             token = lineaAct.charAt(0) + "";
             lineaAct = lineaAct.substring(1);
             opBand = false;
-            return new Token(token, Token.OPERADOR);
+            return new Token(token, Token.OPERADOR, numLinea);
         }
         int i;
         for (i = 0; i < lineaAct.length(); i++) {
@@ -114,15 +115,15 @@ public class Scanner {
                     if (i == 0) {
                         token = lineaAct.charAt(0) + "";
                         lineaAct = lineaAct.substring(1);
-                        return new Token(token, Token.DELIMITADOR);
+                        return new Token(token,errBand ? Token.ERROR : Token.DELIMITADOR, numLinea);
                     }
                     delBand = true;
                     lineaAct = lineaAct.substring(i);
-                    return new Token(token, comprobarTipo(token));
+                    return new Token(token,errBand ? Token.ERROR : comprobarTipo(token), numLinea);
                 }
                 if (caracter == ' ') {
                     lineaAct = lineaAct.substring(i + 1);
-                    return new Token(token, comprobarTipo(token));
+                    return new Token(token,errBand ? Token.ERROR : comprobarTipo(token), numLinea);
                 }
                 if (caracter == 9) { //\t
                     lineaAct = lineaAct.substring(1);
@@ -135,25 +136,26 @@ public class Scanner {
                         if (esOperador(aux2)) {
                             token = caracter + "" + aux2;
                             lineaAct = lineaAct.substring(2);
-                            return new Token(token, Token.OPERADOR);
+                            return new Token(token,errBand ? Token.ERROR : Token.OPERADOR, numLinea);
                         }
                         token = lineaAct.charAt(0) + "";
                         lineaAct = lineaAct.substring(1);
-                        return new Token(token, Token.OPERADOR);
+                        return new Token(token,errBand ? Token.ERROR : Token.OPERADOR, numLinea);
                     }
                     opBand = true;
                     lineaAct = lineaAct.substring(i);
-                    return new Token(token, comprobarTipo(token));
+                    return new Token(token,errBand ? Token.ERROR : comprobarTipo(token), numLinea);
                 }
                 if ( esOpAritmetico(caracter) ){
                     token = lineaAct.charAt(0) + "";
                     lineaAct = lineaAct.substring(i + 1);
-                    return new Token(token, Token.OPERADOR_ARITMETICO);
+                    return new Token(token,errBand ? Token.ERROR : Token.OPERADOR_ARITMETICO, numLinea);
                 }
                 if (caracter == 34){ // "
                     int primerComilla = i;
                     if (i == lineaAct.length()-1 ){ //Faltaba una comilla inicial
                         System.out.println("Error en la linea "+numLinea+" faltó definir la primera comilla");
+                        errBand = true;
                         continue;
                     }
                     do {
@@ -162,21 +164,22 @@ public class Scanner {
                     }while( caracter != 34 && i < lineaAct.length()-1);
                     if (i == lineaAct.length()-1 ){ //Faltaba una comilla final
                         System.out.println("Error en la linea "+numLinea+" faltó definir la segunda comilla");
-                        return null;
+                        return new Token(token, Token.ERROR, numLinea);
                     }
                     token = lineaAct.substring(primerComilla, i+1);
                     lineaAct = lineaAct.substring( i == lineaAct.length()-1 ? i : i+1);
-                    return new Token(token, Token.CADENA);
+                    return new Token(token,errBand ? Token.ERROR : Token.CADENA, numLinea);
                 }
                 //Caracter no identificado
                 System.out.println("Error en la linea "+numLinea+" se encontró un carácter inválido");
+                errBand = true;
                 continue;
             }
             token += caracter;
         }
         //Fin de la linea
         lineaAct = "";
-        return new Token(token, comprobarTipo(token));
+        return new Token(token,errBand ? Token.ERROR : comprobarTipo(token), numLinea);
     }
 
     private boolean esCaracterEspecial(char c){

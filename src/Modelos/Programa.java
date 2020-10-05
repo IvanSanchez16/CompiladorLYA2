@@ -30,11 +30,15 @@ public class Programa {
                         token = S.getToken();
                         return token.getTipo() == Token.DELIMITADOR && token.getToken().equals("}");
                     }
+                    return false;
                 }
+                System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba una llave que abre ¨{¨ ");
                 return false;
             }
+            System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba un identificador despues del class");
             return false;
         }
+        System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba la palabra class");
         return false;
     }
 }

@@ -17,7 +17,10 @@ public class DeclaracionVar {
             token = S.getToken();
             if ( token.getTipo() == Token.IDENTIFICADOR ){
                 token = S.getToken();
-                return token.getTipo() == Token.DELIMITADOR && token.getToken().equals(";");
+                if (token.getTipo() == Token.DELIMITADOR && token.getToken().equals(";"))
+                    return true;
+                System.out.println("Error en la línea "+token.getNumLinea()+" falta un ;");
+                return false;
             }
             return false;
         }
