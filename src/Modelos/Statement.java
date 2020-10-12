@@ -1,5 +1,9 @@
 package Modelos;
 
+import Arbol.Asignacion;
+import Arbol.If;
+import Arbol.While;
+import Arbol.Write;
 import Scanner.Scanner;
 
 public class Statement {
@@ -8,88 +12,111 @@ public class Statement {
     private Token token;
     private Expresion e;
 
-    public Statement(Scanner s) {
+    public Arbol.Programa Arbol;
+
+    public Statement(Scanner s, Arbol.Programa arbol) {
         S = s;
-        e = new Expresion(s);
+        e = new Expresion(s, arbol);
+        Arbol = arbol;
     }
 
-    public boolean validarStatement(){
+    public Arbol.Statement validarStatement(){
         token = S.getToken();
         switch ( token.getToken() ){
             case "while":
+                While state = new While();
                 token = S.getToken();
                 if ( token.getTipo() == Token.DELIMITADOR && token.getToken().equals("(") ){
-                    if ( e.validarExpresion() ){
+                    state.setExp( e.validarExpresion() );
+                    if ( state.getExp() != null ){
                         token = S.getToken();
                         if ( token.getTipo() == Token.DELIMITADOR && token.getToken().equals(")") ){
-                            return validarStatement();
+                            state.setSta( validarStatement() );
+                            if ( state.getSta() != null )
+                                return state;
+                            return null;
                         }
                         System.out.println("Error en la línea "+token.getNumLinea()+" parentesis no cerrado");
-                        return false;
+                        return null;
                     }
-                    return false;
+                    return null;
                 }
                 System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba un ( despues de la palabra while");
-                return false;
+                return null;
             case "if":
+                If si = new If();
                 token = S.getToken();
                 if ( token.getTipo() == Token.DELIMITADOR && token.getToken().equals("(") ){
-                    if ( e.validarExpresion() ){
+                    si.setExp(e.validarExpresion());
+                    if ( si.getExp() != null ){
                         token = S.getToken();
                         if ( token.getTipo() == Token.DELIMITADOR && token.getToken().equals(")") ){
-                            if ( validarStatement() ){
+                            si.setSta(validarStatement());
+                            if ( si.getSta() != null ){
                                 token = S.getToken();
-                                if ( token.getTipo() == Token.RESERVADA && token.getToken().equals("else") )
-                                    return validarStatement();
+                                if ( token.getTipo() == Token.RESERVADA && token.getToken().equals("else") ) {
+                                    si.setSta2(validarStatement());
+                                    if (si.getSta2() != null)
+                                        return si;
+                                    return null;
+                                }
                                 System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba un else");
-                                return false;
+                                return null;
                             }
-                            return false;
+                            return null;
                         }
                         System.out.println("Error en la línea "+token.getNumLinea()+" parentesis no cerrado");
-                        return false;
+                        return null;
                     }
-                    return false;
+                    return null;
                 }
                 System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba un ( despues de la palabra if");
-                return false;
+                return null;
             case "write":
+                Write wr = new Write();
                 token = S.getToken();
                 if ( token.getTipo() == Token.DELIMITADOR && token.getToken().equals("(") ){
-                    if ( e.validarExpresion() ){
+                    wr.setExp(e.validarExpresion());
+                    if ( wr.getExp() != null ){
                         token = S.getToken();
                         if ( token.getTipo() == Token.DELIMITADOR && token.getToken().equals(")") ){
                             token = S.getToken();
                             if (token.getTipo() == Token.DELIMITADOR && token.getToken().equals(";"))
-                                return true;
+                                return wr;
+
                             System.out.println("Error en la línea "+token.getNumLinea()+" falta un ;");
-                            return false;
+                            return null;
                         }
                         System.out.println("Error en la línea "+token.getNumLinea()+" parentesis no cerrado");
-                        return false;
+                        return null;
                     }
-                    return false;
+                    return null;
                 }
                 System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba un ( despues de la palabra write");
-                return false;
+                return null;
             default:
+                Asignacion as = new Asignacion();
                 if (token.getTipo() == Token.IDENTIFICADOR){
+                    as.setPrimIdent(token);
                     token = S.getToken();
                     if ( token.getTipo() == Token.OPERADOR && token.getToken().equals("=") ){
-                        if ( e.validarExpresion() ){
+                        as.setIgual(token);
+                        as.setExp(e.validarExpresion());
+                        if ( as.getExp() != null ){
                             token = S.getToken();
                             if (token.getTipo() == Token.DELIMITADOR && token.getToken().equals(";"))
-                                return true;
+                                return as;
+
                             System.out.println("Error en la línea "+token.getNumLinea()+" falta un ;");
-                            return false;
+                            return null;
                         }
-                        return false;
+                        return null;
                     }
                     System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba un = en el statement");
-                    return false;
+                    return null;
                 }
                 System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba un statement");
-                return false;
+                return null;
         }
     }
 }

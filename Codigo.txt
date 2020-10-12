@@ -1,8 +1,10 @@
 class miClase
-integer X1; boolean Y2;
+integer X1;
+boolean Y2;
+boolean Y3;
 {
- if ( Y2 )
+ if (Y2)
  	X1 = 16;
  else
- while ( y3 )  write (true);
+    while ( y3 )  write (true);
 }
