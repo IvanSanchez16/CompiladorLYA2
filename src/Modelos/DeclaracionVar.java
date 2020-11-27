@@ -32,9 +32,10 @@ public class DeclaracionVar {
                 token = S.getToken();
                 if (token.getTipo() == Token.DELIMITADOR && token.getToken().equals(";"))
                     return true;
-                System.out.println("Error en la línea "+token.getNumLinea()+" falta un ;");
+                System.out.println("Error en la línea "+ (token.getNumLinea()-1) +" falta un ;");
                 return false;
             }
+            System.out.println("Error en la línea "+token.getNumLinea()+" se esperaba un identificador");
             return false;
         }
         return false;

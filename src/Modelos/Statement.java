@@ -84,7 +84,7 @@ public class Statement {
                             if (token.getTipo() == Token.DELIMITADOR && token.getToken().equals(";"))
                                 return wr;
 
-                            System.out.println("Error en la línea "+token.getNumLinea()+" falta un ;");
+                            System.out.println("Error en la línea "+ (token.getNumLinea()-1) +" falta un ;");
                             return null;
                         }
                         System.out.println("Error en la línea "+token.getNumLinea()+" parentesis no cerrado");
@@ -107,7 +107,7 @@ public class Statement {
                             if (token.getTipo() == Token.DELIMITADOR && token.getToken().equals(";"))
                                 return as;
 
-                            System.out.println("Error en la línea "+token.getNumLinea()+" falta un ;");
+                            System.out.println("Error en la línea "+ (token.getNumLinea()-1) +" falta un ;");
                             return null;
                         }
                         return null;
