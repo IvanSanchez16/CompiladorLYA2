@@ -23,6 +23,10 @@ public class Apl {
             //Generacion de codigo intermedio
             if (band){
                 cuadruples = Generador.generarCod(Arbol);
+                int c2 = 0;
+                for (Cuadruple c:cuadruples)
+                    System.out.println( (++c2)+"\t"+c.getOperador()+"\t"+c.getArg1()+"\t"+c.getArg2()+"\t"+c.getResultado() );
+
                 System.out.println("Compilado correctamente");
             }
         }

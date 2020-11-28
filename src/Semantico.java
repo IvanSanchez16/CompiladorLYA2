@@ -87,7 +87,21 @@ public class Semantico {
                  System.out.println("Error en la línea "+t.getNumLinea()+" - "+t.getToken()+" no ha sido declarado");
                  return "error";
             case "Operacion":
-                break;
+                Token t2 = exp.getPrimerIdent();
+                Token t3 = exp.getSegundoIdent();
+                String tipoPrimTok = "";
+                String tipoSegTok = "";
+                for (Simbolo s:tablaS) {
+                    if (s.getIdentificador().equals(t2.getToken()))
+                        tipoPrimTok = s.getTipo();
+                    if (s.getIdentificador().equals(t3.getToken()))
+                        tipoSegTok = s.getTipo();
+                }
+                if (!tipoPrimTok.equals(tipoSegTok)){
+                    System.out.println("Error en la línea "+t2.getNumLinea()+" tipos de variables incompatibles");
+                    return "error";
+                }
+                return tipoPrimTok;
         }
         return "";
     }
