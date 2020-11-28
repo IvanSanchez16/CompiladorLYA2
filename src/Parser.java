@@ -8,19 +8,17 @@ public class Parser {
 
     public Scanner S;
     public Arbol.Programa Arbol;
-    public ArrayList<Simbolo> tablaSimbolos;
 
     public Parser() {
         S = new Scanner("Codigo");
         Arbol = new Arbol.Programa();
-        //Scanner y parser - parte 1
+    }
+
+    public Arbol.Programa parser(){
         Programa p = new Programa(S,Arbol);
         boolean band = p.validarPrograma();
-        //Analisis Semantico y cod intermedio - parte 2
-        if (band){
-            tablaSimbolos = Semantico.crearTabla(Arbol);
-            band = Semantico.analisis(Arbol, tablaSimbolos);
-            System.out.println(band ? "Compilado correctamente" : "");
-        }
+        if (band)
+            return Arbol;
+        return null;
     }
 }
